@@ -1,18 +1,21 @@
 package com.project.iot_spring.mqtt;
 
+import com.project.iot_spring.database.DataRowService;
 import org.eclipse.paho.client.mqttv3.*;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import java.util.logging.Logger;
 
 @Service
 public class MqttSubscriber {
 
-//    @Value("${mqt2
+    private static final Logger LOGGER = Logger.getLogger(MqttSubscriber.class.getName());
 
     private final MqttClient mqttClient;
+    private final DataRowService dataRowService;
 
-    public MqttSubscriber(MqttClient mqttClient) throws MqttException {
+    public MqttSubscriber(MqttClient mqttClient, DataRowService dataRowService) throws MqttException {
         this.mqttClient = mqttClient;
+        this.dataRowService = dataRowService;
         subscribe();
     }
 
@@ -20,9 +23,11 @@ public class MqttSubscriber {
         String topic = "esp32/data";
         mqttClient.subscribe(topic, (t, msg) -> {
             String payload = new String(msg.getPayload());
-            System.out.println("📩 Received MQTT message on topic [" + t + "]: " + payload);
+            LOGGER.info("Received message on topic [" + t + "]: " + payload);
+
+            Thread.startVirtualThread(() -> dataRowService.saveToDatabase(payload));
         });
 
-        System.out.println("✅ Subscribed to MQTT topic: " + topic);
+        LOGGER.info("✅ Subscribed to MQTT topic: " + topic);
     }
 }
