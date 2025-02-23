@@ -1,6 +1,6 @@
 package com.project.iot_spring.mqtt;
 
-import com.project.iot_spring.database.DataRowService;
+import com.project.iot_spring.database.ProcessService;
 import org.eclipse.paho.client.mqttv3.*;
 import org.springframework.stereotype.Service;
 import java.util.logging.Logger;
@@ -11,11 +11,11 @@ public class MqttSubscriber {
     private static final Logger LOGGER = Logger.getLogger(MqttSubscriber.class.getName());
 
     private final MqttClient mqttClient;
-    private final DataRowService dataRowService;
+    private final ProcessService processService;
 
-    public MqttSubscriber(MqttClient mqttClient, DataRowService dataRowService) throws MqttException {
+    public MqttSubscriber(MqttClient mqttClient, ProcessService processService) throws MqttException {
         this.mqttClient = mqttClient;
-        this.dataRowService = dataRowService;
+        this.processService = processService;
         subscribe();
     }
 
@@ -25,9 +25,9 @@ public class MqttSubscriber {
             String payload = new String(msg.getPayload());
             LOGGER.info("Received message on topic [" + t + "]: " + payload);
 
-            Thread.startVirtualThread(() -> dataRowService.saveToDatabase(payload));
+            Thread.startVirtualThread(() -> processService.saveToDatabase(payload));
         });
 
-        LOGGER.info("✅ Subscribed to MQTT topic: " + topic);
+        LOGGER.info("Subscribed to MQTT topic: " + topic);
     }
 }
