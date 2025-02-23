@@ -1,4 +1,4 @@
-package com.project.iot_spring.web;
+package com.project.iot_spring.web.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,9 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RouteDTO {
+public class RouteNameUpdateDTO {
 
-    private Integer id;
-    private String name;
+    private String newName;
 
 }
