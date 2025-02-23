@@ -34,7 +34,7 @@ public class SensorDataValidator {
                 return null;
             }
 
-            return new IotData(routeId, latitude, longitude, timestamp, cps, cpm, usvPerHour, mode);
+            return new IotData(null, routeId, latitude, longitude, timestamp, cps, cpm, usvPerHour, mode);
 
         } catch (Exception e) {
             LOGGER.severe("Error processing MQTT message: " + payload + " -> " + e.getMessage());
