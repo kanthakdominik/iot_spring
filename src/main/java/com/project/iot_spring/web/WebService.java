@@ -1,7 +1,11 @@
 package com.project.iot_spring.web;
 
 import com.project.iot_spring.database.IotDataRepository;
+import com.project.iot_spring.database.Route;
 import com.project.iot_spring.database.RouteRepository;
+import com.project.iot_spring.web.dto.IotDataDTO;
+import com.project.iot_spring.web.dto.RouteDTO;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,10 +31,23 @@ public class WebService {
 
         return iotDataRepository.findByRouteId(routeId).stream()
                 .map(data -> new IotDataDTO(
-                        data.getId(),
                         data.getLatitude(),
                         data.getLongitude(),
                         data.getUsvPerHour()))
                 .collect(Collectors.toList());
+    }
+
+    public void updateRouteName(Integer routeId, String newName) {
+        if (routeId == null || newName == null || newName.trim().isEmpty()) {
+            throw new IllegalArgumentException("RouteId and name cannot be null or empty");
+        }
+        if (newName.length() > 255 || !newName.matches("^[a-zA-Z0-9\\s-_]+$")) {
+            throw new IllegalArgumentException("Invalid route name format");
+        }
+
+        Route route = routeRepository.findById(routeId)
+                .orElseThrow(() -> new EntityNotFoundException("Route not found with id: " + routeId));
+        route.setName(newName);
+        routeRepository.save(route);
     }
 }
