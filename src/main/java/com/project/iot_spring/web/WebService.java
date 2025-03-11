@@ -24,6 +24,17 @@ public class WebService {
                 .collect(Collectors.toList());
     }
 
+    public RouteDTO getRoute(Integer routeId) {
+        if (routeId == null) {
+            throw new IllegalArgumentException("RouteId cannot be null");
+        }
+
+        Route route = routeRepository.findById(routeId)
+                .orElseThrow(() -> new EntityNotFoundException("Route not found with id: " + routeId));
+
+        return new RouteDTO(route.getId(), route.getName());
+    }
+
     public List<IotDataDTO> getRouteData(Integer routeId) {
         if (routeId == null) {
             throw new IllegalArgumentException("RouteId cannot be null");
