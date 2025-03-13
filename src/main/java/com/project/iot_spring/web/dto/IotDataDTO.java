@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class IotDataDTO {
 
+    private long id;
     private double latitude;
     private double longitude;
     private double usvPerHour;

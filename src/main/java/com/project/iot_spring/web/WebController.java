@@ -47,4 +47,27 @@ public class WebController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
         }
     }
+
+    @DeleteMapping("/{routeId}")
+    public ResponseEntity<Map<String, String>> deleteRoute(@PathVariable Integer routeId) {
+        try {
+            webService.deleteRouteWithIotData(routeId);
+            return ResponseEntity.ok(Map.of("message", "Route and its IoT data deleted successfully"));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/{routeId}/data/{iotDataId}")
+    public ResponseEntity<Map<String, String>> deleteIotData(@PathVariable Integer routeId,
+                                                             @PathVariable Long iotDataId) {
+        try {
+            webService.deleteIotData(routeId, iotDataId);
+            return ResponseEntity.ok(Map.of("message", "IoT data deleted successfully"));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+        }
+    }
 }
