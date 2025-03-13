@@ -44,7 +44,9 @@ public class WebService {
                 .map(data -> new IotDataDTO(
                         data.getLatitude(),
                         data.getLongitude(),
-                        data.getUsvPerHour()))
+                        data.getUsvPerHour(),
+                        data.getCpm(),
+                        data.getTimestamp()))
                 .collect(Collectors.toList());
     }
 
