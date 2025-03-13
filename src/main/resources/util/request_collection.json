@@ -26,6 +26,35 @@
 			"response": []
 		},
 		{
+			"name": "Get_route",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/routes/:routeId",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"routes",
+						":routeId"
+					],
+					"variable": [
+						{
+							"key": "routeId",
+							"value": "30"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Get_route_data",
 			"request": {
 				"auth": {
@@ -48,7 +77,7 @@
 					"variable": [
 						{
 							"key": "routeId",
-							"value": "23"
+							"value": "30"
 						}
 					]
 				}
@@ -87,7 +116,71 @@
 					"variable": [
 						{
 							"key": "routeId",
+							"value": "30"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete_route",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/routes/:routeId",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"routes",
+						":routeId"
+					],
+					"variable": [
+						{
+							"key": "routeId",
 							"value": "23"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete_iotData",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/routes/:routeId/data/:iotDataId",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"routes",
+						":routeId",
+						"data",
+						":iotDataId"
+					],
+					"variable": [
+						{
+							"key": "routeId",
+							"value": "29"
+						},
+						{
+							"key": "iotDataId",
+							"value": "7550"
 						}
 					]
 				}
