@@ -3,6 +3,7 @@ package com.project.iot_spring.database;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -25,6 +26,29 @@ public class IotDataRepositoryCustomImpl implements IotDataRepositoryCustom {
         return results.stream().map(this::mapToIotData).toList();
     }
 
+
+    @Transactional
+    @Override
+    public void deleteAllByRouteId(int routeId) {
+        String tableName = "iot_data_route_" + routeId;
+        String sql = "DROP TABLE " + tableName;
+
+        Query query = entityManager.createNativeQuery(sql);
+        query.executeUpdate();
+    }
+
+    @Transactional
+    @Override
+    public void deleteById(long iotDataId, int routeId) {
+        String tableName = "iot_data_route_" + routeId;
+        String sql = "DELETE FROM " + tableName + " WHERE id = :iotDataId";
+
+        Query query = entityManager.createNativeQuery(sql);
+        query.setParameter("iotDataId", iotDataId);
+        query.executeUpdate();
+    }
+
+
     private IotData mapToIotData(Object[] row) {
         return IotData.builder()
                 .id(((Integer) row[0]).longValue())
@@ -38,5 +62,4 @@ public class IotDataRepositoryCustomImpl implements IotDataRepositoryCustom {
                 .mode((String) row[8])
                 .build();
     }
-
 }

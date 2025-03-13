@@ -8,6 +8,7 @@ import com.project.iot_spring.web.dto.RouteDTO;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,6 +43,7 @@ public class WebService {
 
         return iotDataRepository.findByRouteId(routeId).stream()
                 .map(data -> new IotDataDTO(
+                        data.getId(),
                         data.getLatitude(),
                         data.getLongitude(),
                         data.getUsvPerHour(),
@@ -62,5 +64,26 @@ public class WebService {
                 .orElseThrow(() -> new EntityNotFoundException("Route not found with id: " + routeId));
         route.setName(newName);
         routeRepository.save(route);
+    }
+
+    @Transactional
+    public void deleteRouteWithIotData(Integer routeId) {
+        if (routeId == null) {
+            throw new IllegalArgumentException("RouteId cannot be null");
+        }
+
+        Route route = routeRepository.findById(routeId)
+                .orElseThrow(() -> new EntityNotFoundException("Route not found with id: " + routeId));
+        iotDataRepository.deleteAllByRouteId(routeId);
+        routeRepository.delete(route);
+    }
+
+    @Transactional
+    public void deleteIotData(Integer routeId, Long iotDataId) {
+        if (routeId == null || iotDataId == null) {
+            throw new IllegalArgumentException("RouteId and IotDataId cannot be null");
+        }
+
+        iotDataRepository.deleteById(iotDataId, routeId);
     }
 }
