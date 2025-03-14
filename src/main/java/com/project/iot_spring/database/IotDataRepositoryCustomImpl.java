@@ -31,7 +31,7 @@ public class IotDataRepositoryCustomImpl implements IotDataRepositoryCustom {
     @Override
     public void deleteAllByRouteId(int routeId) {
         String tableName = "iot_data_route_" + routeId;
-        String sql = "DROP TABLE " + tableName;
+        String sql = "TRUNCATE TABLE " + tableName;
 
         Query query = entityManager.createNativeQuery(sql);
         query.executeUpdate();
