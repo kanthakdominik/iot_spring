@@ -8,6 +8,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,6 +37,7 @@ public class RouteController {
         return ResponseEntity.ok(webService.getRouteData(routeId));
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PutMapping("/{routeId}/name")
     public ResponseEntity<Map<String, String>> updateRouteName(@PathVariable Integer routeId,
                                                 @RequestBody RouteNameUpdateDTO request) {
@@ -49,6 +51,7 @@ public class RouteController {
         }
     }
 
+    @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{routeId}")
     public ResponseEntity<Map<String, String>> deleteRoute(@PathVariable Integer routeId) {
         try {
@@ -59,6 +62,7 @@ public class RouteController {
         }
     }
 
+    @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{routeId}/data/{iotDataId}")
     public ResponseEntity<Map<String, String>> deleteIotData(@PathVariable Integer routeId,
                                                              @PathVariable Long iotDataId) {

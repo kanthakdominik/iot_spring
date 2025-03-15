@@ -2,22 +2,23 @@ package com.project.iot_spring.web.service;
 
 import com.project.iot_spring.database.dao.User;
 import com.project.iot_spring.database.repository.UserRepository;
+import com.project.iot_spring.web.dto.UserDTO;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -32,15 +33,18 @@ public class UserService implements UserDetailsService {
                 .build();
     }
 
-    public User createUser(String username, String password, String role) {
-        User user = new User();
-        user.setUsername(username);
-        user.setPassword(passwordEncoder.encode(password));
-        user.setRole(role);
-        return userRepository.save(user);
+    public UserDTO getCurrentUserInfo() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated()) {
+            throw new SecurityException("Not authenticated");
+        }
+
+        User user = userRepository.findByUsername(auth.getName())
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        UserDTO userDTO = new UserDTO();
+        userDTO.setUsername(user.getUsername());
+        return userDTO;
     }
 
-    public boolean adminNotExist(String adminUsername) {
-        return userRepository.findByUsername(adminUsername).isEmpty();
-    }
 }
