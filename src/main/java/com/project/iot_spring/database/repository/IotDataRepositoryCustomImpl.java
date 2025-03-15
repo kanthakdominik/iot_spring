@@ -1,5 +1,6 @@
-package com.project.iot_spring.database;
+package com.project.iot_spring.database.repository;
 
+import com.project.iot_spring.database.dao.IotData;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;

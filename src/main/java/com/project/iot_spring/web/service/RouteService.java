@@ -1,8 +1,8 @@
-package com.project.iot_spring.web;
+package com.project.iot_spring.web.service;
 
-import com.project.iot_spring.database.IotDataRepository;
-import com.project.iot_spring.database.Route;
-import com.project.iot_spring.database.RouteRepository;
+import com.project.iot_spring.database.repository.IotDataRepository;
+import com.project.iot_spring.database.dao.Route;
+import com.project.iot_spring.database.repository.RouteRepository;
 import com.project.iot_spring.web.dto.IotDataDTO;
 import com.project.iot_spring.web.dto.RouteDTO;
 import jakarta.persistence.EntityNotFoundException;
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class WebService {
+public class RouteService {
     private final RouteRepository routeRepository;
     private final IotDataRepository iotDataRepository;
 

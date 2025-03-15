@@ -1,4 +1,6 @@
-package com.project.iot_spring.database;
+package com.project.iot_spring.database.repository;
+
+import com.project.iot_spring.database.dao.IotData;
 
 import java.util.List;
 

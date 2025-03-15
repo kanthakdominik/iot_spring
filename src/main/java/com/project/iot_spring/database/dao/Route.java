@@ -1,4 +1,4 @@
-package com.project.iot_spring.database;
+package com.project.iot_spring.database.dao;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

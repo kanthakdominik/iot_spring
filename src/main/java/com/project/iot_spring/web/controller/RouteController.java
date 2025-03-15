@@ -1,5 +1,6 @@
-package com.project.iot_spring.web;
+package com.project.iot_spring.web.controller;
 
+import com.project.iot_spring.web.service.RouteService;
 import com.project.iot_spring.web.dto.IotDataDTO;
 import com.project.iot_spring.web.dto.RouteDTO;
 import com.project.iot_spring.web.dto.RouteNameUpdateDTO;
@@ -16,9 +17,9 @@ import java.util.Map;
 @RequestMapping("/api/routes")
 @CrossOrigin(origins = "http://localhost:4200")
 @AllArgsConstructor
-public class WebController {
+public class RouteController {
 
-    private final WebService webService;
+    private final RouteService webService;
 
     @GetMapping
     public ResponseEntity<List<RouteDTO>> getAllRoutes() {

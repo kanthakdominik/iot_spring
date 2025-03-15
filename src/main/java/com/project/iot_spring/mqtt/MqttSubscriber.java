@@ -1,6 +1,6 @@
 package com.project.iot_spring.mqtt;
 
-import com.project.iot_spring.database.ProcessService;
+import com.project.iot_spring.web.service.ProcessService;
 import org.eclipse.paho.client.mqttv3.*;
 import org.springframework.stereotype.Service;
 import java.util.logging.Logger;

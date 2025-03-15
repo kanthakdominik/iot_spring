@@ -1,5 +1,9 @@
-package com.project.iot_spring.database;
+package com.project.iot_spring.web.service;
 
+import com.project.iot_spring.database.repository.IotDataRepository;
+import com.project.iot_spring.database.repository.RouteRepository;
+import com.project.iot_spring.database.dao.IotData;
+import com.project.iot_spring.database.dao.Route;
 import com.project.iot_spring.validator.SensorDataValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,6 +1,6 @@
 package com.project.iot_spring.validator;
 
-import com.project.iot_spring.database.IotData;
+import com.project.iot_spring.database.dao.IotData;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
