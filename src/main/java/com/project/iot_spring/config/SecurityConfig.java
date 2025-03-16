@@ -1,5 +1,6 @@
 package com.project.iot_spring.config;
 
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -20,13 +21,10 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@AllArgsConstructor
 public class SecurityConfig {
 
     private final JsonAuthenticationEntryPoint authEntryPoint;
-
-    public SecurityConfig(JsonAuthenticationEntryPoint authEntryPoint) {
-        this.authEntryPoint = authEntryPoint;
-    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
