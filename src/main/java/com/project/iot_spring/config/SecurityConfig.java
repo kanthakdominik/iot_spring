@@ -37,6 +37,8 @@ public class SecurityConfig {
                     config.setAllowedOrigins(List.of("http://localhost:4200"));
                     config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
                     config.setAllowedHeaders(List.of("*"));
+                    config.setAllowCredentials(true);
+                    config.setMaxAge(3600L);
                     return config;
                 }))
                 .authorizeHttpRequests(authorize -> authorize
