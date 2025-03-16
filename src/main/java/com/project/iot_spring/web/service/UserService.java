@@ -4,7 +4,7 @@ import com.project.iot_spring.database.dao.User;
 import com.project.iot_spring.database.repository.UserRepository;
 import com.project.iot_spring.web.dto.UserDTO;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,13 +13,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
+@AllArgsConstructor
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
-
-    @Autowired
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

@@ -7,185 +7,235 @@
 	},
 	"item": [
 		{
-			"name": "Get_all_routes",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "localhost:8080/api/routes",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"routes"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get_route",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "localhost:8080/api/routes/:routeId",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"routes",
-						":routeId"
-					],
-					"variable": [
-						{
-							"key": "routeId",
-							"value": "30"
+			"name": "route",
+			"item": [
+				{
+					"name": "Get_all_routes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/routes",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"routes"
+							]
 						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get_route_data",
-			"request": {
-				"auth": {
-					"type": "noauth"
+					},
+					"response": []
 				},
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "localhost:8080/api/routes/:routeId/data",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"routes",
-						":routeId",
-						"data"
-					],
-					"variable": [
-						{
-							"key": "routeId",
-							"value": "30"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Change_route_name",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"newName\": \"78\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "localhost:8080/api/routes/:routeId/name",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"routes",
-						":routeId",
-						"name"
-					],
-					"variable": [
-						{
-							"key": "routeId",
-							"value": "30"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Delete_route",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "DELETE",
-				"header": [],
-				"url": {
-					"raw": "localhost:8080/api/routes/:routeId",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"routes",
-						":routeId"
-					],
-					"variable": [
-						{
-							"key": "routeId",
-							"value": "23"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Delete_iotData",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "DELETE",
-				"header": [],
-				"url": {
-					"raw": "localhost:8080/api/routes/:routeId/data/:iotDataId",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"routes",
-						":routeId",
-						"data",
-						":iotDataId"
-					],
-					"variable": [
-						{
-							"key": "routeId",
-							"value": "29"
+				{
+					"name": "Get_route",
+					"request": {
+						"auth": {
+							"type": "noauth"
 						},
-						{
-							"key": "iotDataId",
-							"value": "7550"
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/routes/:routeId",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"routes",
+								":routeId"
+							],
+							"variable": [
+								{
+									"key": "routeId",
+									"value": "30"
+								}
+							]
 						}
-					]
+					},
+					"response": []
+				},
+				{
+					"name": "Get_route_data",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/routes/:routeId/data",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"routes",
+								":routeId",
+								"data"
+							],
+							"variable": [
+								{
+									"key": "routeId",
+									"value": "30"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change_route_name",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"newName\": \"78\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/routes/:routeId/name",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"routes",
+								":routeId",
+								"name"
+							],
+							"variable": [
+								{
+									"key": "routeId",
+									"value": "30"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete_route",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/routes/:routeId",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"routes",
+								":routeId"
+							],
+							"variable": [
+								{
+									"key": "routeId",
+									"value": "23"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete_iotData",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/routes/:routeId/data/:iotDataId",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"routes",
+								":routeId",
+								"data",
+								":iotDataId"
+							],
+							"variable": [
+								{
+									"key": "routeId",
+									"value": "29"
+								},
+								{
+									"key": "iotDataId",
+									"value": "7550"
+								}
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
+		},
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/auth/login",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get_username",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/auth/username",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"username"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }
