@@ -25,32 +25,35 @@ public class ProcessService {
         this.routeRepository = routeRepository;
     }
 
-    @Transactional
     public void saveToDatabase(String payload) {
         IotData data = SensorDataValidator.validateAndParse(payload);
 
         if (data != null) {
             LOGGER.info("Saving to database: " + data);
-
-            if (currentRouteId == null || !currentRouteId.equals(data.getRouteId())) {
-                try {
-                    int newId = data.getRouteId();
-                    String newName = "Route-" + newId;
-                    Route newRoute = new Route(newId, newName);
-
-                    routeRepository.save(newRoute);
-                    currentRouteId = newId;
-
-                    LOGGER.info("Created new route: " + newName);
-                } catch (Exception e) {
-                    LOGGER.severe("Failed to create new route: " + e.getMessage());
-                    return;
-                }
-            }
-
-            iotDataRepository.save(data);
+            saveValidData(data);
         } else {
             LOGGER.warning("Invalid data received, skipping save.");
         }
+    }
+
+    @Transactional
+    private void saveValidData(IotData data) {
+        if (currentRouteId == null || !currentRouteId.equals(data.getRouteId())) {
+            try {
+                int newId = data.getRouteId();
+                String newName = "Route-" + newId;
+                Route newRoute = new Route(newId, newName);
+
+                routeRepository.save(newRoute);
+                currentRouteId = newId;
+
+                LOGGER.info("Created new route: " + newName);
+            } catch (Exception e) {
+                LOGGER.severe("Failed to create new route: " + e.getMessage());
+                return;
+            }
+        }
+
+        iotDataRepository.save(data);
     }
 }
