@@ -2,10 +2,12 @@ package com.project.iot_spring.mqtt;
 
 import com.project.iot_spring.web.service.ProcessService;
 import org.eclipse.paho.client.mqttv3.*;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Service;
 import java.util.logging.Logger;
 
 @Service
+@ConditionalOnBean(MqttClient.class)
 public class MqttSubscriber {
 
     private static final Logger LOGGER = Logger.getLogger(MqttSubscriber.class.getName());

@@ -10,6 +10,7 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -26,12 +27,13 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 
 @Configuration
+@ConditionalOnProperty(prefix = "mqtt", name = "enabled", havingValue = "true", matchIfMissing = false)
 public class MqttConfig {
 
-    @Value("${mqtt.broker-url}")
+    @Value("${mqtt.broker-url:}")
     private String brokerUrl;
 
-    @Value("${mqtt.client-id}")
+    @Value("${mqtt.client-id:iot_spring}")
     private String clientId;
 
     static {
