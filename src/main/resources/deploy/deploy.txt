@@ -1,0 +1,23 @@
+ssh -i /c/Users/kanth/.ssh/iot_keys.pem ubuntu@ec2-16-170-207-230.eu-north-1.compute.amazonaws.com
+
+
+ssh -i /c/Users/kanth/.ssh/iot_keys.pem -L 5433:iot-database.ch2cgqe46azc.eu-north-1.rds.amazonaws.com:5432 ubuntu@ec2-16-170-207-230.eu-north-1.compute.amazonaws.com
+psql -h localhost -p 5433 -U posgres -d iot_database
+
+sudo apt update
+sudo apt install openjdk-21-jre-headless
+
+psql -h iot-database.ch2cgqe46azc.eu-north-1.rds.amazonaws.com -U postgres -d iot_database -p 5432
+
+
+scp -i /c/Users/kanth/.ssh/iot_keys.pem /c/Users/kanth/Desktop/iot_spring/target/iot-spring-0.0.1-SNAPSHOT.jar ubuntu@ec2-16-170-207-230.eu-north-1.compute.amazonaws.com:~/
+nohup java -Dspring.profiles.active=prod -jar iot-spring-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
+
+ps aux | grep iot-spring-0.0.1-SNAPSHOT.jar
+
+
+sha256sum target/iot-spring-0.0.1-SNAPSHOT.jar
+sha256sum iot-spring-0.0.1-SNAPSHOT.jar
+
+ng cache clean
+ng build --configuration production --output-hashing=all
