@@ -1,4 +1,4 @@
-# Metryki mobilne dla trasy `0.13`
+# Metryki mobilne dla trasy `data_pedestrian.csv`
 
 ## Podstawowe informacje
 
@@ -24,7 +24,7 @@
 | Minimum µSv/h | 0,060 |
 | Maksimum µSv/h | 0,110 |
 | Percentyl 95 µSv/h | 0,100 |
-| Liczba lokalnych wzrostów >= 0,120 µSv/h | 0 |
+| Liczba lokalnych wzrostów >= 0,150 µSv/h | 0 |
 | Maksimum µSv/h - czas | 16.06.2025 15:41:33 |
 | Maksimum µSv/h - pozycja | 52,218296, 21,011515 |
 | Średnia krocząca 10 s µSv/h - maksimum | 0,103 |
@@ -33,4 +33,4 @@
 
 | Trasa | Liczba próbek | Czas trwania | Długość trasy [m] | GPS poprawny [%] | Śr. odstęp [s] | Średnia µSv/h | Mediana µSv/h | Percentyl 95 µSv/h | Maksimum µSv/h | Lokalne wzrosty |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 0.13 | 148 | 02:30 | 183,60 | 100,00 | 1,02 | 0,089 | 0,090 | 0,100 | 0,110 | 0 |
+| data_pedestrian.csv | 148 | 02:30 | 183,60 | 100,00 | 1,02 | 0,089 | 0,090 | 0,100 | 0,110 | 0 |

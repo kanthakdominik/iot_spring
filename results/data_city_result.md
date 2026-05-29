@@ -1,4 +1,4 @@
-# Metryki mobilne dla trasy `0.13`
+# Metryki mobilne dla trasy `data_city.csv`
 
 ## Podstawowe informacje
 
@@ -24,7 +24,7 @@
 | Minimum µSv/h | 0,040 |
 | Maksimum µSv/h | 0,150 |
 | Percentyl 95 µSv/h | 0,140 |
-| Liczba lokalnych wzrostów >= 0,120 µSv/h | 528 |
+| Liczba lokalnych wzrostów >= 0,150 µSv/h | 46 |
 | Maksimum µSv/h - czas | 11.05.2025 23:09:15 |
 | Maksimum µSv/h - pozycja | 51,792595, 19,391722 |
 | Średnia krocząca 10 s µSv/h - maksimum | 0,150 |
@@ -33,4 +33,4 @@
 
 | Trasa | Liczba próbek | Czas trwania | Długość trasy [m] | GPS poprawny [%] | Śr. odstęp [s] | Średnia µSv/h | Mediana µSv/h | Percentyl 95 µSv/h | Maksimum µSv/h | Lokalne wzrosty |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 0.13 | 2247 | 38:32 | 24343,25 | 100,00 | 1,03 | 0,099 | 0,100 | 0,140 | 0,150 | 528 |
+| data_city.csv | 2247 | 38:32 | 24343,25 | 100,00 | 1,03 | 0,099 | 0,100 | 0,140 | 0,150 | 46 |

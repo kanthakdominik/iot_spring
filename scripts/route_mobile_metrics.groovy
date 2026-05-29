@@ -19,8 +19,19 @@ if (!inputFile.exists()) {
     System.exit(1)
 }
 
-def routeName = args.length > 1 ? args[1] : inputFile.name
-Double localRiseThreshold = args.length > 2 ? args[2].replace(',', '.') as Double : 0.12d
+def routeName = inputFile.name
+Double localRiseThreshold = 0.12d
+
+if (args.length == 2) {
+    if (args[1].matches("-?\\d+([.,]\\d+)?")) {
+        localRiseThreshold = args[1].replace(',', '.') as Double
+    } else {
+        routeName = args[1]
+    }
+} else if (args.length > 2) {
+    routeName = args[1]
+    localRiseThreshold = args[2].replace(',', '.') as Double
+}
 
 def formatter = DateTimeFormatter.ofPattern('yyyy-MM-dd HH:mm:ss')
 def rows = []
