@@ -45,7 +45,7 @@
 ## Tabela do pracy – mobilność
 
 | Trasa | Liczba próbek | Czas trwania | Długość trasy [m] | GPS poprawny [%] | Śr. odstęp [s] | Średnia µSv/h | Mediana µSv/h | Percentyl 95 µSv/h | Maksimum µSv/h | Lokalne wzrosty |
-|---|---|---|---|---|---|---|---|---|---|---|---|
+|---|---|---|---|---|---|---|---|---|---|---|
 | 50 cm | 172 | 02:54 | 197,24 | 100,00 | 1,02 | 0,108 | 0,120 | 0,170 | 0,180 | 30 |
 
 ## Tabela do pracy – detekcja źródła

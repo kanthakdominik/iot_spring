@@ -2,7 +2,7 @@
 
 **Prawdziwe współrzędne źródła:** `52.218280627634556`, `21.010925227559188`
 
-## data_source_50.csv
+## 50 cm
 
 - **Maksymalny CPM:** 32
 - **Próg strefy piku (80% max CPM):** 25,60
@@ -17,7 +17,7 @@
 - **Odległość maksimum CPM od źródła:** 18,63 m
 - **Przesunięcie maksimum CPM względem punktu najbliższego źródłu:** 21,95 m, 24 s
 
-## data_source_100.csv
+## 100 cm
 
 - **Maksymalny CPM:** 26
 - **Próg strefy piku (80% max CPM):** 20,80
@@ -34,7 +34,7 @@
 
 ## Tabela do pracy
 
-| Metryka przestrzenna | data_source_50.csv | data_source_100.csv |
+| Metryka przestrzenna | 50 cm | 100 cm |
 |---|---|---|
 | Maksymalny CPM | 32 | 26 |
 | Próg strefy piku [CPM] | 25,60 | 20,80 |

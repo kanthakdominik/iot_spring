@@ -23,7 +23,12 @@ def file2 = new File(args[1])
 
 // Automatyczne etykiety z nazw plików
 def label1 = file1.name
+def matcher1 = label1 =~ /_(\d+)\.csv$/
+if (matcher1.find()) { label1 = matcher1.group(1) + " cm" }
+
 def label2 = file2.name
+def matcher2 = label2 =~ /_(\d+)\.csv$/
+if (matcher2.find()) { label2 = matcher2.group(1) + " cm" }
 
 // Parametry źródła
 double trueLat = args.length >= 3 ? args[2].replace(',', '.') as Double : 52.218280627634556d

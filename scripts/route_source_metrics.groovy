@@ -254,7 +254,7 @@ println ''
 println '## Tabela do pracy – mobilność'
 println ''
 println '| Trasa | Liczba próbek | Czas trwania | Długość trasy [m] | GPS poprawny [%] | Śr. odstęp [s] | Średnia µSv/h | Mediana µSv/h | Percentyl 95 µSv/h | Maksimum µSv/h | Lokalne wzrosty |'
-println '|---|---|---|---|---|---|---|---|---|---|---|---|'
+println '|---|---|---|---|---|---|---|---|---|---|---|'
 println "| ${routeName} | ${rows.size()} | ${plDuration(duration)} | ${plNum(totalDistance)} | ${plNum(gpsCoverage, 2)} | ${plNum(mean(intervals))} | ${plNum(meanUsv, 3)} | ${plNum(medUsv, 3)} | ${plNum(p95Usv, 3)} | ${plNum(usvValues ? usvValues.max() : null, 3)} | ${localRiseRows.size()} |"
 println ''
 println '## Tabela do pracy – detekcja źródła'
