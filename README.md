@@ -40,3 +40,8 @@ groovy scripts/route_source_metrics.groovy measurements/data_source_50.csv > res
 ```bash
 groovy scripts/route_source_metrics.groovy measurements/data_source_100.csv > results/data_source_100_result.md
 ```
+
+# Analiza środków promieniowania w odniesieniu do prawdziwego źródła (dla 50cm i 100cm)
+```bash
+groovy scripts/routes_spatial_compare.groovy measurements/data_source_50.csv measurements/data_source_100.csv > results/data_radiation_centers_info.md
+```

@@ -1,8 +1,8 @@
 #!/usr/bin/env groovy
 
-System.setProperty("file.encoding", "UTF-8")
-System.out = new PrintStream(System.out, true, "UTF-8")
-System.err = new PrintStream(System.err, true, "UTF-8")
+System.setProperty('file.encoding', 'UTF-8')
+System.out = new PrintStream(System.out, true, 'UTF-8')
+System.err = new PrintStream(System.err, true, 'UTF-8')
 
 import java.time.Duration
 import java.time.LocalDateTime

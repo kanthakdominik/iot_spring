@@ -1,5 +1,9 @@
 #!/usr/bin/env groovy
 
+System.setProperty('file.encoding', 'UTF-8')
+System.out = new PrintStream(System.out, true, 'UTF-8')
+System.err = new PrintStream(System.err, true, 'UTF-8')
+
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -65,16 +69,16 @@ inputFile.withReader('UTF-8') { reader ->
     def header = parseCsvLine(headerLine).collect { it.replace('"', '') }
 
     def idx = [
-        latitude : header.indexOf('latitude'),
-        longitude: header.indexOf('longitude'),
-        timestamp: header.indexOf('timestamp'),
-        cps      : header.indexOf('cps'),
-        cpm      : header.indexOf('cpm'),
-        usv      : header.indexOf('usv_per_hr'),
-        mode     : header.indexOf('mode')
+            latitude : header.indexOf('latitude'),
+            longitude: header.indexOf('longitude'),
+            timestamp: header.indexOf('timestamp'),
+            cps      : header.indexOf('cps'),
+            cpm      : header.indexOf('cpm'),
+            usv      : header.indexOf('usv_per_hr'),
+            mode     : header.indexOf('mode')
     ]
 
-    ['latitude','longitude','timestamp'].each { key ->
+    ['latitude', 'longitude', 'timestamp'].each { key ->
         if (idx[key] < 0) {
             System.err.println "Brak wymaganej kolumny: ${key}"
             System.exit(1)
@@ -87,13 +91,13 @@ inputFile.withReader('UTF-8') { reader ->
         def lat = cols[idx.latitude].replace('"', '') as BigDecimal
         def lon = cols[idx.longitude].replace('"', '') as BigDecimal
         rows << [
-            latitude : lat,
-            longitude: lon,
-            timestamp: LocalDateTime.parse(cols[idx.timestamp].replace('"', ''), formatter),
-            cps      : idx.cps >= 0 && cols[idx.cps] ? cols[idx.cps].replace('"', '') as Integer : null,
-            cpm      : idx.cpm >= 0 && cols[idx.cpm] ? cols[idx.cpm].replace('"', '') as Integer : null,
-            usv      : idx.usv >= 0 && cols[idx.usv] ? cols[idx.usv].replace('"', '') as BigDecimal : null,
-            mode     : idx.mode >= 0 ? cols[idx.mode].replace('"', '') : null
+                latitude : lat,
+                longitude: lon,
+                timestamp: LocalDateTime.parse(cols[idx.timestamp].replace('"', ''), formatter),
+                cps      : idx.cps >= 0 && cols[idx.cps] ? cols[idx.cps].replace('"', '') as Integer : null,
+                cpm      : idx.cpm >= 0 && cols[idx.cpm] ? cols[idx.cpm].replace('"', '') as Integer : null,
+                usv      : idx.usv >= 0 && cols[idx.usv] ? cols[idx.usv].replace('"', '') as BigDecimal : null,
+                mode     : idx.mode >= 0 ? cols[idx.mode].replace('"', '') : null
         ]
     }
 }
@@ -162,7 +166,7 @@ for (int i = 1; i < rows.size(); i++) {
     double dt = Duration.between(rows[i - 1].timestamp, rows[i].timestamp).toMillis() / 1000.0d
     intervals << dt
     if ((rows[i - 1].latitude as double) != 0d && (rows[i - 1].longitude as double) != 0d &&
-        (rows[i].latitude as double) != 0d && (rows[i].longitude as double) != 0d) {
+            (rows[i].latitude as double) != 0d && (rows[i].longitude as double) != 0d) {
         double d = haversine(
                 rows[i - 1].latitude as double,
                 rows[i - 1].longitude as double,

@@ -53,16 +53,16 @@ inputFile.withReader('UTF-8') { reader ->
     def header = parseCsvLine(headerLine).collect { it.replace('"', '') }
 
     def idx = [
-        latitude : header.indexOf('latitude'),
-        longitude: header.indexOf('longitude'),
-        timestamp: header.indexOf('timestamp'),
-        cps      : header.indexOf('cps'),
-        cpm      : header.indexOf('cpm'),
-        usv      : header.indexOf('usv_per_hr'),
-        mode     : header.indexOf('mode')
+            latitude : header.indexOf('latitude'),
+            longitude: header.indexOf('longitude'),
+            timestamp: header.indexOf('timestamp'),
+            cps      : header.indexOf('cps'),
+            cpm      : header.indexOf('cpm'),
+            usv      : header.indexOf('usv_per_hr'),
+            mode     : header.indexOf('mode')
     ]
 
-    ['latitude','longitude','timestamp'].each { key ->
+    ['latitude', 'longitude', 'timestamp'].each { key ->
         if (idx[key] < 0) {
             System.err.println "Brak wymaganej kolumny: ${key}"
             System.exit(1)
@@ -76,13 +76,13 @@ inputFile.withReader('UTF-8') { reader ->
         def lon = cols[idx.longitude].replace('"', '')
         def ts = cols[idx.timestamp].replace('"', '')
         rows << [
-            latitude : lat as BigDecimal,
-            longitude: lon as BigDecimal,
-            timestamp: LocalDateTime.parse(ts, formatter),
-            cps      : idx.cps >= 0 && cols[idx.cps] ? cols[idx.cps].replace('"', '') as Integer : null,
-            cpm      : idx.cpm >= 0 && cols[idx.cpm] ? cols[idx.cpm].replace('"', '') as Integer : null,
-            usv      : idx.usv >= 0 && cols[idx.usv] ? cols[idx.usv].replace('"', '') as BigDecimal : null,
-            mode     : idx.mode >= 0 ? cols[idx.mode].replace('"', '') : null
+                latitude : lat as BigDecimal,
+                longitude: lon as BigDecimal,
+                timestamp: LocalDateTime.parse(ts, formatter),
+                cps      : idx.cps >= 0 && cols[idx.cps] ? cols[idx.cps].replace('"', '') as Integer : null,
+                cpm      : idx.cpm >= 0 && cols[idx.cpm] ? cols[idx.cpm].replace('"', '') as Integer : null,
+                usv      : idx.usv >= 0 && cols[idx.usv] ? cols[idx.usv].replace('"', '') as BigDecimal : null,
+                mode     : idx.mode >= 0 ? cols[idx.mode].replace('"', '') : null
         ]
     }
 }
