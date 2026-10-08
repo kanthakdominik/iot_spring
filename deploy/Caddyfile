@@ -1,0 +1,19 @@
+{
+	email {$ACME_EMAIL}
+}
+
+{$DOMAIN} {
+	encode zstd gzip
+
+	# REST API -> Spring Boot backend
+	handle /api/* {
+		reverse_proxy backend:8080
+	}
+
+	# Angular SPA - unknown paths fall back to index.html (client-side routing)
+	handle {
+		root * /srv
+		try_files {path} /index.html
+		file_server
+	}
+}

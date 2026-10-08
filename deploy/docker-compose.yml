@@ -1,0 +1,109 @@
+# Whole IoT system on one machine (Oracle Cloud Always Free, Ampere A1).
+#
+#   caddy     -> https://$DOMAIN        (Angular frontend + /api proxied to backend, automatic HTTPS)
+#   backend   -> Spring Boot, only reachable inside the Docker network
+#   postgres  -> PostgreSQL 18 + TimescaleDB, only reachable inside the Docker network
+#                (schema created by the backend with Flyway)
+#   mosquitto -> MQTT over TLS on port 8883 (client certificates required)
+#   duckdns   -> keeps $DOMAIN pointing at this machine's public IP
+#
+# Expected folder layout on the server:
+#   ~/iot/iot_spring   (this repo)
+#   ~/iot/iot_angular  (frontend repo)
+#
+# All settings live in deploy/.env (copy from .env.example).
+
+name: iot
+
+services:
+  postgres:
+    image: timescale/timescaledb:2.30.0-pg18
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: iot_database
+      TIMESCALEDB_TELEMETRY: "off"
+      TS_TUNE_MEMORY: 4GB
+    # Bigger buffer = faster queries and a steady memory footprint
+    command: ["postgres", "-c", "shared_buffers=${PG_SHARED_BUFFERS:-1GB}"]
+    volumes:
+      - pgdata:/var/lib/postgresql
+      # database dumps for scripts/import-legacy.sh and restores
+      - ./backups:/backups:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d iot_database -h 127.0.0.1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+
+  mosquitto:
+    image: eclipse-mosquitto:2
+    restart: unless-stopped
+    ports:
+      - "8883:8883"
+    volumes:
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - ./mosquitto/acl:/mosquitto/config/acl:ro
+      - ./certs/mosquitto:/mosquitto/certs:ro
+      - mosquitto_data:/mosquitto/data
+
+  backend:
+    build:
+      context: ..
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mosquitto:
+        condition: service_started
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/iot_database
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      # first administrator - created only when the users table is empty
+      APP_ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
+      APP_ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      MQTT_ENABLED: "true"
+      MQTT_BROKER_URL: ssl://mosquitto:8883
+      MQTT_CLIENT_ID: iot_spring
+      MQTT_CERT_DIR: /certs
+      APP_CORS_ALLOWED_ORIGINS: https://${DOMAIN}
+      # Fixed, pre-touched heap: steady memory use (keeps the Oracle "idle" check away)
+      JAVA_TOOL_OPTIONS: ${JAVA_OPTS:--Xms3g -Xmx3g -XX:+AlwaysPreTouch}
+      TZ: Europe/Warsaw
+    volumes:
+      - ./certs/backend:/certs:ro
+
+  caddy:
+    build:
+      context: ../../iot_angular
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN:?set DOMAIN in .env}
+      ACME_EMAIL: ${ACME_EMAIL:-}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+  duckdns:
+    image: lscr.io/linuxserver/duckdns:latest
+    restart: unless-stopped
+    environment:
+      SUBDOMAINS: ${DUCKDNS_SUBDOMAIN}
+      TOKEN: ${DUCKDNS_TOKEN}
+      TZ: Europe/Warsaw
+      LOG_FILE: "false"
+
+volumes:
+  pgdata:
+  mosquitto_data:
+  caddy_data:
+  caddy_config:

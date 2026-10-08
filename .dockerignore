@@ -1,0 +1,12 @@
+.git
+.idea
+.mvn/wrapper/maven-wrapper.jar
+target
+deploy
+database
+measurements
+results
+scripts
+*.log
+*.gz
+src/main/resources/certs

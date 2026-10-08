@@ -1,0 +1,5 @@
+# secrets and generated data - never commit
+.env
+certs/
+backups/*
+!backups/.gitkeep

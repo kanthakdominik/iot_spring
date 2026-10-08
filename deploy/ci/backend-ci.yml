@@ -1,0 +1,37 @@
+# CI for the backend: on every push / pull request GitHub builds the app with Java 25,
+# runs unit tests (*Test) and integration tests (*IT, TimescaleDB in Docker via Testcontainers)
+# and checks that the Docker image builds.
+name: Backend CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "25"
+          cache: maven
+
+      - name: Build, unit and integration tests
+        run: mvn -B verify
+
+      - name: Upload test reports on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            target/surefire-reports
+            target/failsafe-reports
+
+      - name: Check that the Docker image builds
+        run: docker build -t iot-backend:ci .

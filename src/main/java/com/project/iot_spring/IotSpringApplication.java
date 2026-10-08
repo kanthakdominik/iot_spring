@@ -6,8 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class IotSpringApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(IotSpringApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(IotSpringApplication.class, args);
+    }
 }

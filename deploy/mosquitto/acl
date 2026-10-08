@@ -1,0 +1,15 @@
+# Mosquitto ACL - MQTT v1 (iot_spring/docs/PROTOCOL.md)
+# The username is the CN of the client certificate (use_identity_as_username).
+
+# ---- every measuring device: only its OWN topics ----
+pattern write radmon/v1/%u/telemetry
+pattern write radmon/v1/%u/status
+pattern write radmon/v1/%u/event
+pattern read  radmon/v1/%u/cmd
+
+# ---- backend ----
+user iot_spring
+topic read  radmon/v1/+/telemetry
+topic read  radmon/v1/+/status
+topic read  radmon/v1/+/event
+topic write radmon/v1/+/cmd
