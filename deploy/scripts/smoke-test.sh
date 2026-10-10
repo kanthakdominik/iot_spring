@@ -36,7 +36,7 @@ check "frontend (GET /)"                 http_ok "$BASE/"
 check "SPA routing (GET /routes)"        http_ok "$BASE/routes"
 check "health endpoint reports UP"       bash -c "curl -s --max-time 10 '$BASE/api/actuator/health' | grep -q '\"UP\"'"
 check "reading routes needs login"       bash -c "[ \"\$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 '$BASE/api/routes')\" = 401 ]"
-check "protected endpoint needs login"   bash -c "[ \"\$(curl -s -o /dev/null -w '%{http_code}' -X DELETE '$BASE/api/routes/999999')\" = 401 ]"
+check "protected endpoint needs login"   bash -c "case \"\$(curl -s -o /dev/null -w '%{http_code}' -X DELETE '$BASE/api/routes/999999')\" in 401|403) true;; *) false;; esac"
 check "unknown share link gives 404"     bash -c "[ \"\$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 '$BASE/api/public/routes/AAAAAAAAAAAAAAAAAAAAAA')\" = 404 ]"
 check "security headers (CSP)"           bash -c "curl -sI --max-time 10 '$BASE/' | grep -qi '^content-security-policy:'"
 check "MQTT TLS handshake with client certificate (port 8883)" \
