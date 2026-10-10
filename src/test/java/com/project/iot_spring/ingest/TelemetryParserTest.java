@@ -127,4 +127,25 @@ class TelemetryParserTest {
 
         assertThat(t.routeNo()).isEqualTo(42);
     }
+
+    @Test
+    void importModeKeepsDeviceTime() {
+        Telemetry t = parser.parseWithDeviceTime(VALID, NOW);
+
+        assertThat(t.timestamp()).isEqualTo(Instant.parse("2026-10-08T19:56:03Z"));
+        assertThat(t.timeSource()).isEqualTo("gnss");
+    }
+
+    @Test
+    void importModeRejectsMissingOrImplausibleTimestamp() {
+        assertThatThrownBy(() -> parser.parseWithDeviceTime(VALID.replace("\"ts\":\"2026-10-08T19:56:03Z\",", ""), NOW))
+                .isInstanceOf(InvalidMessageException.class)
+                .hasMessageContaining("timestamp");
+        assertThatThrownBy(() -> parser.parseWithDeviceTime(
+                VALID.replace("2026-10-08T19:56:03Z", "1980-01-06T00:00:00Z"), NOW))
+                .isInstanceOf(InvalidMessageException.class);
+        assertThatThrownBy(() -> parser.parseWithDeviceTime(
+                VALID.replace("2026-10-08T19:56:03Z", "not a time"), NOW))
+                .isInstanceOf(InvalidMessageException.class);
+    }
 }

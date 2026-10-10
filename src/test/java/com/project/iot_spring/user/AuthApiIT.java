@@ -28,6 +28,10 @@ class AuthApiIT extends IntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username").value(ADMIN_USER))
                 .andExpect(jsonPath("$.role").value("ADMIN"))
+                .andExpect(jsonPath("$.preferences.theme").value("system"))
+                .andExpect(jsonPath("$.preferences.language").value("pl"))
+                .andExpect(jsonPath("$.preferences.doseUnit").value("uSv"))
+                .andExpect(jsonPath("$.preferences.mapLayer").value("osm"))
                 .andReturn();
 
         MockHttpSession session = (MockHttpSession) login.getRequest().getSession(false);
@@ -66,8 +70,9 @@ class AuthApiIT extends IntegrationTest {
 
     @Test
     void csrfCookieIsIssuedForTheSpa() throws Exception {
-        mvc.perform(get("/api/routes"))
-                .andExpect(status().isOk())
+        // the first call of the SPA - works without a session
+        mvc.perform(get("/api/auth/me"))
+                .andExpect(status().isUnauthorized())
                 .andExpect(cookie().exists("XSRF-TOKEN"));
     }
 

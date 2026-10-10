@@ -123,21 +123,24 @@ class TelemetryIngestIT extends IntegrationTest {
     }
 
     @Test
+    void newRouteIsMarkedForStatisticsAndCountsFixes() {
+        dispatcher.dispatch("radmon/v1/esp32-1/telemetry", sample(1, 0, "2026-10-08T19:00:00Z", true), NOW);
+        dispatcher.dispatch("radmon/v1/esp32-1/telemetry", sample(1, 1, "2026-10-08T19:00:01Z", false), NOW);
+
+        Map<String, Object> route = jdbc.sql("SELECT sample_count, fix_count, stats_dirty FROM routes")
+                .query().singleRow();
+        assertThat(route.get("sample_count")).isEqualTo(2);
+        assertThat(route.get("fix_count")).isEqualTo(1);
+        // RouteStatsJob is disabled in tests (app.stats.job.enabled=false)
+        assertThat(route.get("stats_dirty")).isEqualTo(true);
+    }
+
+    @Test
     void batteryEventUpdatesDevice() {
         dispatcher.dispatch("radmon/v1/esp32-1/event", "{\"type\":\"battery\",\"mv\":3700,\"pct\":40}", NOW);
 
         Map<String, Object> device = jdbc.sql("SELECT battery_mv, battery_pct FROM devices").query().singleRow();
         assertThat(device.get("battery_mv")).isEqualTo(3700);
         assertThat(device.get("battery_pct")).isEqualTo(40);
-    }
-
-    private long count(String table) {
-        return jdbc.sql("SELECT count(*) FROM " + table).query(Long.class).single();
-    }
-
-    static String sample(int routeNo, int seq, String ts, boolean fix) {
-        String position = fix ? "\"fix\":true,\"lat\":52.218269,\"lon\":21.011198," : "\"fix\":false,";
-        return "{\"v\":1,\"r\":" + routeNo + ",\"seq\":" + seq + ",\"ts\":\"" + ts + "\",\"tsrc\":\"gnss\","
-                + position + "\"cps\":0,\"cpm\":18,\"usv\":0.10,\"mode\":\"SLOW\"}";
     }
 }
