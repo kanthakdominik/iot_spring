@@ -2,6 +2,7 @@ package com.project.iot_spring.web;
 
 import com.project.iot_spring.device.MqttUnavailableException;
 import com.project.iot_spring.user.LoginBlockedException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -10,7 +11,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
  * Maps application exceptions to RFC 9457 "problem+json" responses.
- * Validation errors (@Valid) are handled by Spring MVC itself (spring.mvc.problemdetails.enabled=true).
+ * Validation errors (@Valid), missing parameters and too large uploads are handled by Spring MVC itself
+ * (spring.mvc.problemdetails.enabled=true).
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -23,6 +25,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ProblemDetail badRequest(IllegalArgumentException e) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    public ProblemDetail conflict(ConflictException e) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, e.getMessage());
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ProblemDetail dataConflict(DataIntegrityViolationException e) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, "The change conflicts with existing data");
     }
 
     @ExceptionHandler(BadCredentialsException.class)

@@ -54,4 +54,11 @@ public class Device {
 
     @Column(name = "battery_at")
     private Instant batteryAt;
+
+    /** GSM signal quality 0..31 (AT+CSQ), null = unknown. */
+    @Column(name = "signal_csq")
+    private Short signalCsq;
+
+    @Column(name = "signal_at")
+    private Instant signalAt;
 }

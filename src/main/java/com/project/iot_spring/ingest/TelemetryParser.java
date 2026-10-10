@@ -12,8 +12,10 @@ import java.util.Set;
 /**
  * Parses and validates telemetry payload v1 (docs/PROTOCOL.md, section 2.1).
  * <p>
- * Invalid messages throw {@link InvalidMessageException}. A missing or implausible device timestamp is
- * not an error: the sample keeps its data and gets the server receive time ({@code timeSource = "srv"}).
+ * Invalid messages throw {@link InvalidMessageException}. For live MQTT data ({@link #parse}) a missing or
+ * implausible device timestamp is not an error: the sample keeps its data and gets the server receive time
+ * ({@code timeSource = "srv"}). For SD card imports ({@link #parseWithDeviceTime}) there is no meaningful
+ * server time, so such a line is invalid.
  */
 @Component
 public class TelemetryParser {
@@ -32,7 +34,21 @@ public class TelemetryParser {
         this.jsonMapper = jsonMapper;
     }
 
+    /** Live data: a missing / implausible {@code ts} is replaced by {@code receivedAt}. */
     public Telemetry parse(String payload, Instant receivedAt) {
+        return parse(payload, receivedAt, false);
+    }
+
+    /**
+     * SD card import: the line must carry a valid, plausible {@code ts}.
+     *
+     * @param now current time, upper bound for plausible timestamps
+     */
+    public Telemetry parseWithDeviceTime(String payload, Instant now) {
+        return parse(payload, now, true);
+    }
+
+    private Telemetry parse(String payload, Instant receivedAt, boolean requireDeviceTime) {
         TelemetryMessage m;
         try {
             m = jsonMapper.readValue(payload, TelemetryMessage.class);
@@ -74,6 +90,9 @@ public class TelemetryParser {
 
         Instant ts = parseTimestamp(m.ts(), receivedAt);
         String timeSource;
+        if (ts == null && requireDeviceTime) {
+            throw new InvalidMessageException("Missing or implausible timestamp: " + m.ts());
+        }
         if (ts == null) {
             ts = receivedAt;
             timeSource = Telemetry.TIME_SERVER;

@@ -1,5 +1,6 @@
 package com.project.iot_spring.config;
 
+import jakarta.servlet.DispatcherType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,7 +31,9 @@ import java.util.List;
  * <ul>
  *   <li>session based login (JSESSIONID cookie, HttpOnly, SameSite=Lax, Secure in prod)</li>
  *   <li>CSRF protection for the Angular SPA (XSRF-TOKEN cookie -> X-XSRF-TOKEN header)</li>
- *   <li>reading routes / devices is public, every change requires role ADMIN</li>
+ *   <li>roles ADMIN (everything) and VIEWER (read only + own preferences and password)</li>
+ *   <li>every GET needs a login; public are only login, health and routes shared with a link
+ *       ({@code /api/public/**}); every other change requires ADMIN (docs/V2.1-SPEC.md, section 3.0)</li>
  * </ul>
  */
 @Configuration
@@ -49,9 +52,16 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .securityContext(context -> context.securityContextRepository(securityContextRepository))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
+                        // continuation of an already authorized request (SSE / async MVC)
+                        .dispatcherTypeMatchers(DispatcherType.ASYNC).permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/auth/me").permitAll()
+                        .requestMatchers("/api/public/**").permitAll()
                         .requestMatchers("/api/actuator/health", "/api/actuator/health/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/routes/**", "/api/devices/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/auth/preferences").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/password", "/api/auth/logout").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/users", "/api/users/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/**").authenticated()
                         .requestMatchers("/api/**").hasRole("ADMIN")
                         .anyRequest().permitAll())
                 .formLogin(AbstractHttpConfigurer::disable)

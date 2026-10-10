@@ -15,6 +15,7 @@ import java.time.Instant;
 /**
  * A measurement route. Identified in the database by {@link #id}; on the device side by the pair
  * (deviceId, deviceRouteNo). Created by the ingest service on the first sample of a route.
+ * Statistics, preview and share token are read with plain SQL ({@link RouteQueries}).
  */
 @Entity
 @Table(name = "routes")
@@ -39,13 +40,15 @@ public class Route {
     @Column(length = 2000)
     private String description;
 
-    @Column(name = "started_at")
+    // maintained by ingest and RouteStatsService (plain SQL) - never written by JPA,
+    // so renaming a route cannot overwrite values updated concurrently by ingest
+    @Column(name = "started_at", insertable = false, updatable = false)
     private Instant startedAt;
 
-    @Column(name = "ended_at")
+    @Column(name = "ended_at", insertable = false, updatable = false)
     private Instant endedAt;
 
-    @Column(name = "sample_count", nullable = false)
+    @Column(name = "sample_count", nullable = false, insertable = false, updatable = false)
     private int sampleCount;
 
     @Column(name = "created_at", nullable = false, insertable = false, updatable = false)

@@ -1,5 +1,6 @@
 package com.project.iot_spring.route;
 
+import com.fasterxml.jackson.annotation.JsonRawValue;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
@@ -7,20 +8,39 @@ import jakarta.validation.constraints.Size;
 
 import java.time.Instant;
 
-/** Request / response objects of the routes API (see docs/PROTOCOL.md, section 3). */
+/** Request / response objects of the routes API (see docs/V2.1-SPEC.md, section 3.2). */
 public final class RouteDtos {
 
     private RouteDtos() {
     }
 
-    public record RouteDto(Long id, String deviceId, Integer deviceRouteNo, String name, String description,
-                           Instant startedAt, Instant endedAt, int sampleCount) {
+    /**
+     * Route with statistics (docs/V2.1-SPEC.md, section 3.2).
+     *
+     * @param preview    {@code {"track":[[lat,lon,usv],...],"spark":[usv,...]}} - stored as JSONB and passed through
+     *                   as raw JSON; null until RouteStatsJob computes it
+     * @param shareToken only for ADMIN, otherwise null
+     */
+    public record RouteDto(Long id, String deviceId, String deviceName, Integer deviceRouteNo, String name,
+                           String description, Instant startedAt, Instant endedAt, int sampleCount, int fixCount,
+                           Double distanceM, Double minUsv, Double avgUsv, Double maxUsv, Double doseUsv,
+                           boolean active, @JsonRawValue String preview, String shareToken) {
 
-        public static RouteDto from(Route r) {
-            return new RouteDto(r.getId(), r.getDeviceId(), r.getDeviceRouteNo(), r.getName(), r.getDescription(),
-                    r.getStartedAt(), r.getEndedAt(), r.getSampleCount());
+        public RouteDto withoutPreview() {
+            return new RouteDto(id, deviceId, deviceName, deviceRouteNo, name, description, startedAt, endedAt,
+                    sampleCount, fixCount, distanceM, minUsv, avgUsv, maxUsv, doseUsv, active, null, shareToken);
+        }
+
+        public RouteDto withoutShareToken() {
+            return new RouteDto(id, deviceId, deviceName, deviceRouteNo, name, description, startedAt, endedAt,
+                    sampleCount, fixCount, distanceM, minUsv, avgUsv, maxUsv, doseUsv, active, preview, null);
         }
     }
+
+    /** SSE {@code measurement}: a stored live sample. */
+    public record MeasurementEvent(Long routeId, String deviceId, MeasurementDto measurement) { }
+
+    public record ShareTokenDto(String token) { }
 
     /** PATCH body: null = leave unchanged, empty description = remove it. */
     public record RouteUpdateRequest(

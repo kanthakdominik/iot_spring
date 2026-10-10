@@ -10,6 +10,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Set;
+
 @Entity
 @Table(name = "users")
 @Getter
@@ -18,6 +22,8 @@ import lombok.Setter;
 public class User {
 
     public static final String ROLE_ADMIN = "ADMIN";
+    public static final String ROLE_VIEWER = "VIEWER";
+    public static final Set<String> ROLES = Set.of(ROLE_ADMIN, ROLE_VIEWER);
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,13 +36,19 @@ public class User {
     @Column(nullable = false, length = 100)
     private String password;
 
-    /** Role name without the ROLE_ prefix, e.g. ADMIN. */
+    /** Role name without the ROLE_ prefix: ADMIN or VIEWER. */
     @Column(nullable = false, length = 20)
     private String role;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private Instant createdAt;
+
+    // "preferences" (JSONB) is read and written with plain SQL by UserService
 
     public User(String username, String password, String role) {
         this.username = username;
         this.password = password;
         this.role = role;
+        this.createdAt = Instant.now().truncatedTo(ChronoUnit.MICROS);
     }
 }
