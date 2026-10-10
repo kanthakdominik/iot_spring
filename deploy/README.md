@@ -259,6 +259,7 @@ DUCKDNS_SUBDOMAIN=iot-manager
 DUCKDNS_TOKEN=<token z duckdns.org>
 POSTGRES_PASSWORD=<wynik openssl rand>
 ADMIN_PASSWORD=<hasło do logowania w aplikacji>   # konto admin tworzone przy pierwszym starcie
+NTFY_URL=                      # opcjonalnie: powiadomienia push na telefon (krok 12.1)
 ```
 
 Zapis w nano: `Ctrl+O`, `Enter`, wyjście: `Ctrl+X`. Zabezpiecz plik:
@@ -319,7 +320,7 @@ Podgląd:
 
 ```bash
 docker compose ps                       # wszystkie kontenery powinny mieć status "running"/"healthy"
-docker compose logs -f backend          # szukaj: "Successfully applied 1 migration" (Flyway),
+docker compose logs -f backend          # szukaj: "Successfully applied 2 migrations" (Flyway),
                                         #         "Created initial administrator account 'admin'",
                                         #         "Subscribed to MQTT topics"
 docker compose logs -f caddy            # szukaj: "certificate obtained successfully"
@@ -355,13 +356,15 @@ Wszystkie pozycje powinny mieć `OK`.
 
 ### 11.2 W przeglądarce
 
-Otwórz **https://iot-manager.duckdns.org** – powinna być lista Twoich tras z pracy.
-Sprawdź mapę i wykres dowolnej trasy, potem zaloguj się jako `admin`.
+Otwórz **https://iot-manager.duckdns.org** i zaloguj się jako `admin` (od v2.1 cała aplikacja wymaga
+logowania; publiczne są tylko trasy udostępnione linkiem „Udostępnij”) – powinna być lista Twoich tras z pracy.
+Sprawdź mapę i wykres dowolnej trasy. Kolejne konta (rola `VIEWER` – tylko odczyt, albo `ADMIN`) dodasz
+w **Ustawienia → Użytkownicy**.
 
 **Konto admina** to `ADMIN_USERNAME` / `ADMIN_PASSWORD` z `.env` (tworzone tylko przy pierwszym starcie,
 gdy w bazie nie ma żadnego użytkownika).
 
-Zmiana hasła później:
+Zmiana hasła później: **Ustawienia → Hasło** w aplikacji. Gdy nie pamiętasz hasła żadnego admina:
 ```bash
 # 1) hash BCrypt (zamień NoweHaslo123)
 docker run --rm httpd:2-alpine htpasswd -nbBC 10 admin 'NoweHaslo123'
@@ -401,6 +404,36 @@ Szczegóły firmware: `iot_esp32/README.md`.
 Kolejne urządzenie: `./scripts/gen-certs.sh esp32-2` i `deviceId = "esp32-2"` w jego `secrets.h`.
 
 > `secrets_certs.h` i `secrets.h` zawierają klucz prywatny – nie commituj ich do repozytorium.
+
+### 12.1 Powiadomienia push (ntfy) – opcjonalnie
+
+Alerty (wysoki poziom promieniowania, niska bateria, urządzenie offline) mogą przychodzić na telefon przez
+darmową usługę [ntfy](https://ntfy.sh) – bez zakładania konta.
+
+1. Zainstaluj aplikację **ntfy** na telefonie (Google Play / F-Droid / App Store).
+2. Wymyśl **losową** nazwę tematu – każdy, kto ją zna, może czytać Twoje powiadomienia, więc nie używaj
+   nazw typu `radiacja`. Na przykład (na serwerze):
+   ```bash
+   echo "radmon-$(openssl rand -hex 12)"
+   ```
+3. W aplikacji ntfy: **+** → **Subscribe to topic** → wpisz tę nazwę (serwer `ntfy.sh`).
+4. Na serwerze dopisz do `deploy/.env`:
+   ```ini
+   NTFY_URL=https://ntfy.sh/radmon-<twoja-losowa-końcówka>
+   NTFY_TOKEN=          # tylko dla chronionego tematu / własnego serwera ntfy
+   ```
+5. Zrestartuj backend i sprawdź, że powiadomienia są włączone:
+   ```bash
+   docker compose up -d backend
+   docker compose logs backend | grep "Push notifications enabled"
+   ```
+6. Test bez czekania na alert:
+   ```bash
+   curl -d "Test powiadomienia" "$(grep ^NTFY_URL .env | cut -d= -f2)"
+   ```
+
+Które alerty wysyłają push, ustawiasz w aplikacji (**Alerty → Reguły**, przełącznik „Push”). Kliknięcie
+powiadomienia otwiera listę alertów (`https://<DOMAIN>/alerts`).
 
 ---
 

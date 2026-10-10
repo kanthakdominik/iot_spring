@@ -69,8 +69,13 @@ Serwer: próbka z tym samym `(routeId, seq, ts)` jest ignorowana (deduplikacja p
 
 Po każdym połączeniu z brokerem:
 ```json
-{"online":true,"fw":"2.0.0","r":42,"reset":"POWERON","bat_mv":3980,"bat_pct":70}
+{"online":true,"fw":"2.1.0","r":42,"reset":"POWERON","bat_mv":3980,"bat_pct":70,"csq":18}
 ```
+
+| Pole | Opis |
+|---|---|
+| `bat_mv`, `bat_pct` | napięcie i szacowany poziom baterii |
+| `csq` | od v2.1, opcjonalne: zasięg GSM z `AT+CSQ`, 0–31; `99` (nieznany) i tryb Wi-Fi → pole pominięte |
 Last Will (wysyłany przez broker po zerwaniu połączenia):
 ```json
 {"online":false}
@@ -79,11 +84,16 @@ Last Will (wysyłany przez broker po zerwaniu połączenia):
 ### 2.3 `event` – zdarzenia
 
 ```json
-{"type":"battery","mv":3980,"pct":70}
+{"type":"battery","mv":3980,"pct":70,"csq":17}
 {"type":"route-started","r":43,"reason":"cmd"}
 {"type":"marker","r":42,"seq":1600,"ts":"2026-10-08T20:01:00Z","fix":true,"lat":52.2,"lon":21.0,"label":"button"}
 {"type":"error","code":"sensor-timeout","msg":"no data from MightyOhm for 5 s"}
 ```
+
+`battery` – odpowiedź na komendę `battery`, a od v2.1 także **cyklicznie** co `HEALTH_INTERVAL` (domyślnie 10 min,
+`config.h`), gdy urządzenie jest połączone z brokerem; `csq` jak w `status` (pomijane, gdy nieznane).
+Backend zapisuje każdy odczyt baterii / zasięgu w historii urządzenia (`device_health`) i sprawdza regułę alertu
+`BATTERY_BELOW`.
 
 ### 2.4 `cmd` – komendy (backend → urządzenie)
 
@@ -95,6 +105,10 @@ Last Will (wysyłany przez broker po zerwaniu połączenia):
 ---
 
 ## 3. REST API (`/api`, JSON)
+
+> **Wersja 2.1:** obowiązującym kontraktem REST (logowanie wymagane dla wszystkich GET, role ADMIN / VIEWER,
+> stronicowanie, statystyki tras, udostępnianie, alerty, zdarzenia, import z SD, SSE `/api/stream`) jest
+> [`V2.1-SPEC.md`](V2.1-SPEC.md), sekcja 3. Poniższa tabela opisuje v2.0.
 
 Uwierzytelnianie: sesja (ciasteczko `JSESSIONID`). Ochrona CSRF: ciasteczko `XSRF-TOKEN` → nagłówek
 `X-XSRF-TOKEN` przy POST/PUT/PATCH/DELETE (Angular robi to automatycznie przy względnych URL-ach).

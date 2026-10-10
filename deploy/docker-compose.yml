@@ -70,6 +70,11 @@ services:
       MQTT_CLIENT_ID: iot_spring
       MQTT_CERT_DIR: /certs
       APP_CORS_ALLOWED_ORIGINS: https://${DOMAIN}
+      # links in push notifications
+      APP_PUBLIC_URL: https://${DOMAIN}
+      # push notifications through ntfy (optional, empty = off) - see README, "Powiadomienia push"
+      APP_NOTIFY_NTFY_URL: ${NTFY_URL:-}
+      APP_NOTIFY_NTFY_TOKEN: ${NTFY_TOKEN:-}
       # Fixed, pre-touched heap: steady memory use (keeps the Oracle "idle" check away)
       JAVA_TOOL_OPTIONS: ${JAVA_OPTS:--Xms3g -Xmx3g -XX:+AlwaysPreTouch}
       TZ: Europe/Warsaw

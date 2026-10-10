@@ -25,7 +25,7 @@ http_ok() { [ "$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 "$1")" = "
 
 echo "Waiting for the backend to start..."
 for _ in $(seq 1 30); do
-    http_ok "$BASE/api/routes" && break
+    http_ok "$BASE/api/actuator/health" && break
     sleep 5
 done
 
@@ -34,10 +34,11 @@ check "all containers running" \
     bash -c '[ -z "$(docker compose ps --status exited --status restarting -q)" ]'
 check "frontend (GET /)"                 http_ok "$BASE/"
 check "SPA routing (GET /routes)"        http_ok "$BASE/routes"
-check "API (GET /api/routes)"            http_ok "$BASE/api/routes"
-check "API returns JSON list"            bash -c "curl -s --max-time 10 '$BASE/api/routes' | grep -q '^\['"
 check "health endpoint reports UP"       bash -c "curl -s --max-time 10 '$BASE/api/actuator/health' | grep -q '\"UP\"'"
+check "reading routes needs login"       bash -c "[ \"\$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 '$BASE/api/routes')\" = 401 ]"
 check "protected endpoint needs login"   bash -c "[ \"\$(curl -s -o /dev/null -w '%{http_code}' -X DELETE '$BASE/api/routes/999999')\" = 401 ]"
+check "unknown share link gives 404"     bash -c "[ \"\$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 '$BASE/api/public/routes/AAAAAAAAAAAAAAAAAAAAAA')\" = 404 ]"
+check "security headers (CSP)"           bash -c "curl -sI --max-time 10 '$BASE/' | grep -qi '^content-security-policy:'"
 check "MQTT TLS handshake with client certificate (port 8883)" \
     bash -c "echo | openssl s_client -connect '$DOMAIN:8883' -servername '$DOMAIN' \
              -CAfile certs/ca/ca.crt -cert certs/backend/client-cert.pem -key certs/backend/client-key.pem \

@@ -11,7 +11,7 @@
 # Mapping:
 #   old routes        -> device "esp32-legacy", device_route_no = old id, same id and name
 #   old iot_data      -> measurements; old local time is interpreted as Europe/Warsaw; seq = order in time
-#   old users         -> users (only usernames that do not exist yet)
+#   old users         -> users (only usernames that do not exist yet; role ADMIN stays, others -> VIEWER)
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -80,8 +80,11 @@ ON CONFLICT DO NOTHING;
 -- new routes must get ids above the imported ones
 SELECT setval(pg_get_serial_sequence('routes', 'id'), (SELECT COALESCE(max(id), 1) FROM routes));
 
+-- v2.1 knows only ADMIN and VIEWER (old roles such as USER become VIEWER)
 INSERT INTO users (username, password, role)
-SELECT username, password, role FROM legacy_users
+SELECT username, password,
+       CASE WHEN upper(role) IN ('ADMIN', 'ROLE_ADMIN') THEN 'ADMIN' ELSE 'VIEWER' END
+FROM legacy_users
 ON CONFLICT (username) DO NOTHING;
 
 DROP TABLE legacy_routes, legacy_data, legacy_users;
