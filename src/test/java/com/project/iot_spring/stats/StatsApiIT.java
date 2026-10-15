@@ -66,7 +66,7 @@ class StatsApiIT extends IntegrationTest {
                 .andExpect(jsonPath("$.devicesOnline").value(2))
                 .andExpect(jsonPath("$.sampleCount").value(5))
                 // 13 m; the 11 km jump within one second is a GPS error and is not counted
-                .andExpect(jsonPath("$.distanceM", closeTo(13.04, 0.01)))
+                .andExpect(jsonPath("$.distanceM").value(closeTo(13.04, 0.01), Double.class))
                 .andExpect(jsonPath("$.doseUsv").isNumber())
                 .andExpect(jsonPath("$.maxUsv.value").value(0.45))
                 .andExpect(jsonPath("$.maxUsv.routeName").value("Las Kabacki"))
@@ -118,10 +118,10 @@ class StatsApiIT extends IntegrationTest {
                 .andExpect(jsonPath("$.cells", hasSize(2)))
                 // biggest count first: 3 samples (2 from esp32-1, 1 from esp32-2) in the cell at 52.2 / 21.0
                 .andExpect(jsonPath("$.cells[0].count").value(3))
-                .andExpect(jsonPath("$.cells[0].lat", closeTo(52.196044921875, 1e-9)))
-                .andExpect(jsonPath("$.cells[0].lon", closeTo(20.994873046875, 1e-9)))
+                .andExpect(jsonPath("$.cells[0].lat").value(closeTo(52.196044921875, 1e-9), Double.class))
+                .andExpect(jsonPath("$.cells[0].lon").value(closeTo(20.994873046875, 1e-9), Double.class))
                 .andExpect(jsonPath("$.cells[0].maxUsv").value(0.45))
-                .andExpect(jsonPath("$.cells[0].avgUsv", closeTo(0.25, 1e-9)))
+                .andExpect(jsonPath("$.cells[0].avgUsv").value(closeTo(0.25, 1e-9), Double.class))
                 .andExpect(jsonPath("$.cells[1].count").value(1));
 
         mvc.perform(get("/api/map/grid")
