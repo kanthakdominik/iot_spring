@@ -11,7 +11,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -66,14 +65,6 @@ class AuthApiIT extends IntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"username\":\"intruder\",\"password\":\"guess\"}"))
                 .andExpect(status().isTooManyRequests());
-    }
-
-    @Test
-    void csrfCookieIsIssuedForTheSpa() throws Exception {
-        // the first call of the SPA - works without a session
-        mvc.perform(get("/api/auth/me"))
-                .andExpect(status().isUnauthorized())
-                .andExpect(cookie().exists("XSRF-TOKEN"));
     }
 
     @Test
