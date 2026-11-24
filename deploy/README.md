@@ -4,7 +4,56 @@ Instrukcja krok po kroku: od pustego konta Oracle do działającego systemu pod
 `https://iot-manager.duckdns.org`, z Twoimi pomiarami z pracy magisterskiej i urządzeniem ESP32
 wysyłającym dane przez MQTT.
 
-Szacowany czas: **1–2 godziny** za pierwszym razem.
+Szacowany czas: **1–2 godziny** za pierwszym razem (szybka ścieżka niżej: ~30 minut, głównie czekanie).
+
+---
+
+## Szybka ścieżka – wszystko komendami (zalecane)
+
+Dwa skrypty robią za Ciebie kroki 2–11 tej instrukcji. Dalsze sekcje opisują to samo ręcznie
+i przydają się, gdy coś pójdzie nie tak.
+
+**A. Klucz SSH na Twoim komputerze (Git Bash)**
+
+```bash
+ssh-keygen -t ed25519 -f ~/.ssh/oracle_iot -N ""
+cat ~/.ssh/oracle_iot.pub          # skopiuj całą linię (ssh-ed25519 AAAA...)
+```
+
+**B. Maszyna w Oracle – Cloud Shell** (ikona `>_` w prawym górnym rogu konsoli Oracle)
+
+```bash
+git clone https://github.com/kanthakdominik/iot_spring.git
+bash iot_spring/deploy/scripts/oci-create-vm.sh      # wklej klucz z kroku A, gdy zapyta
+```
+
+Skrypt tworzy sieć, otwiera porty w firewallu Oracle i zakłada maszynę ARM (2 OCPU, 12 GB, Ubuntu 24.04).
+Na końcu wypisuje **adres IP**. Przy „Out of host capacity” sam próbuje innych stref; jeśli żadna nie ma miejsca –
+uruchom go ponownie później.
+
+**C. Instalacja na serwerze (Git Bash na Twoim komputerze)**
+
+```bash
+ssh -i ~/.ssh/oracle_iot ubuntu@<IP>
+# już na serwerze:
+git clone https://github.com/kanthakdominik/iot_spring.git ~/iot/iot_spring
+bash ~/iot/iot_spring/deploy/scripts/server-setup.sh
+```
+
+Skrypt zapyta o token DuckDNS, e-mail (Let's Encrypt) i hasło administratora, a potem sam: otworzy porty
+na maszynie, zainstaluje Dockera, pobierze kod, wygeneruje hasło bazy i certyfikaty MQTT, ustawi DuckDNS
+na ten serwer, zbuduje i uruchomi system (5–15 min) i zrobi test.
+
+**D. Pomiary z pracy magisterskiej** (opcjonalnie; nowe okno Git Bash na Twoim komputerze)
+
+```bash
+scp -i ~/.ssh/oracle_iot \
+  "/c/projects/iot_thesis/Dominik_Kanthak_praca_magisterska/database_configuration/iot_database_measurements_backup.sql" \
+  ubuntu@<IP>:~/iot/iot_spring/deploy/backups/initial.dump
+ssh -i ~/.ssh/oracle_iot ubuntu@<IP> "cd ~/iot/iot_spring/deploy && sudo bash scripts/import-legacy.sh"
+```
+
+Gotowe: **https://iot-manager.duckdns.org** (login `admin`). Dalej: ESP32 – krok 12, kopie zapasowe – krok 13.
 
 ---
 
