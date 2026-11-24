@@ -18,7 +18,7 @@ NAME="${NAME:-iot-server}"
 OCPUS="${OCPUS:-2}"
 MEMORY_GB="${MEMORY_GB:-12}"
 BOOT_GB="${BOOT_GB:-100}"
-CS_KEY=~/.ssh/iot_server        # key of this Cloud Shell (lets you log in from here as well)
+CS_KEY=~/.ssh/iot_server        # key of this Cloud Shell (RSA - Cloud Shell runs in FIPS mode, no ed25519)
 
 say() { printf '\n\033[1m>>> %s\033[0m\n' "$*"; }
 # prints the value or nothing (the OCI CLI complains on empty results)
@@ -28,7 +28,7 @@ say "Region: ${OCI_REGION:-?} (Always Free ARM works only in your HOME region)"
 
 # ---------- SSH keys ----------
 mkdir -p ~/.ssh && chmod 700 ~/.ssh
-[ -f "$CS_KEY" ] || ssh-keygen -q -t ed25519 -N "" -C "oracle-cloud-shell" -f "$CS_KEY"
+[ -f "$CS_KEY" ] || ssh-keygen -q -t rsa -b 4096 -N "" -C "oracle-cloud-shell" -f "$CS_KEY"
 KEYS=$(mktemp)
 cat "$CS_KEY.pub" > "$KEYS"
 echo
