@@ -4,6 +4,7 @@
 #
 #   git clone https://github.com/kanthakdominik/iot_spring.git
 #   bash iot_spring/deploy/scripts/oci-create-vm.sh
+#   bash iot_spring/deploy/scripts/oci-create-vm.sh --retry   # repeat every 5 min until Oracle has a free ARM host
 #
 # What it does (safe to run again - existing pieces are reused):
 #   1. network: VCN "iot-vcn" + internet gateway + public subnet
@@ -18,6 +19,8 @@ NAME="${NAME:-iot-server}"
 OCPUS="${OCPUS:-2}"
 MEMORY_GB="${MEMORY_GB:-12}"
 BOOT_GB="${BOOT_GB:-100}"
+RETRY=false; [ "${1:-}" = "--retry" ] && RETRY=true
+RETRY_EVERY=300                 # seconds between rounds with --retry
 CS_KEY=~/.ssh/iot_server        # key of this Cloud Shell (RSA - Cloud Shell runs in FIPS mode, no ed25519)
 
 say() { printf '\n\033[1m>>> %s\033[0m\n' "$*"; }
@@ -96,7 +99,12 @@ else
 
     say "Tworzę maszynę $NAME ($OCPUS OCPU, $MEMORY_GB GB RAM, dysk $BOOT_GB GB) - 1-3 minuty"
     ERR=$(mktemp)
-    for AD in $(oci iam availability-domain list --compartment-id "$C" --query 'data[].name' --raw-output | jq -r '.[]'); do
+    ADS=$(oci iam availability-domain list --compartment-id "$C" --query 'data[].name' --raw-output | jq -r '.[]')
+    ROUND=0
+    while :; do
+    ROUND=$((ROUND + 1))
+    $RETRY && echo "--- próba nr $ROUND ($(date '+%H:%M'))"
+    for AD in $ADS; do
         echo "próbuję: $AD"
         if INST=$(oci compute instance launch --compartment-id "$C" --availability-domain "$AD" \
                     --display-name "$NAME" --shape VM.Standard.A1.Flex \
@@ -110,17 +118,22 @@ else
         INST=""
         if grep -qi "capacity" "$ERR"; then
             echo "   brak wolnych maszyn ARM w $AD"
+        elif $RETRY && grep -qiE "TooManyRequests|InternalError|ServiceUnavailable|timed out" "$ERR"; then
+            echo "   chwilowy błąd Oracle w $AD - spróbuję w następnej rundzie"
         else
             cat "$ERR"; exit 1
         fi
     done
-    if [ -z "$INST" ]; then
+    [ -n "$INST" ] && break
+    if ! $RETRY; then
         echo
         echo "Oracle nie ma teraz wolnych maszyn ARM w żadnej strefie (Out of host capacity)."
-        echo "To częste na kontach Always Free - uruchom skrypt ponownie za kilka godzin"
-        echo "(sieć jest już gotowa, skrypt jej nie zdubluje)."
+        echo "Uruchom ponownie z --retry (próbuje co 5 minut, aż się uda) albo za kilka godzin."
+        echo "Sieć jest już gotowa - skrypt jej nie zdubluje."
         exit 1
     fi
+    sleep "$RETRY_EVERY"
+    done
 fi
 
 IP=$(oci compute instance list-vnics --instance-id "$INST" --query 'data[0]."public-ip"' --raw-output)
